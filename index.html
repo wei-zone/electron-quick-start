@@ -54,17 +54,8 @@
             var s = document.getElementsByTagName("script")[0];
             s.parentNode.appendChild(hm);
         })();
-        // 移动端禁止滑动
-        // if (/AppleWebKit.*Mobile/i.test(navigator.userAgent) || (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))) {
-        //     document.addEventListener("touchmove", function (e) {
-        //         e.preventDefault()
-        //     }, {passive: false})
-        // }
     </script>
 </head>
-<!-- 防止伪类:active失效-->
-<body ontouchstart>
-
 <div id="app">
     <div class="loading">
         加载中...
