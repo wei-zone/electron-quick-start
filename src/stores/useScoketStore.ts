@@ -18,10 +18,8 @@ export const useSocketStore: any = defineStore('useSocketStore', () => {
         Message.success('playing')
     })
 
-    const play = () => {
-        socket.emit('play', {
-            name: '张三'
-        })
+    const play = (data) => {
+        socket.emit('play', data)
     }
 
     return {
