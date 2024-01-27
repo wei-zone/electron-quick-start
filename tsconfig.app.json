@@ -1,14 +1,15 @@
 {
     "extends": "@vue/tsconfig/tsconfig.dom.json",
     "include": [
-        "env.d.ts",
-        "src/**/*",
-        "src/**/*.vue",
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.tsx",
-        "electron",
-        "electron/**/*.ts"
+      "env.d.ts",
+      "src/**/*",
+      "src/**/*.vue",
+      "src/**/*.ts",
+      "src/**/*.d.ts",
+      "src/**/*.tsx",
+      "electron",
+      "electron/**/*.ts",
+      "./auto-imports.d.ts"
     ],
     "exclude": ["src/**/__tests__/*"],
     "compilerOptions": {
@@ -17,6 +18,12 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "noEmit": true
+        /* Bundler mode */
+        "moduleResolution": "node",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "preserve"
     }
 }

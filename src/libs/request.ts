@@ -5,14 +5,24 @@
  */
 
 import axios from 'axios'
-import type { AxiosInstance, AxiosRequestConfig, CreateAxiosDefaults } from 'axios'
+import type { AxiosResponse, AxiosInstance, AxiosRequestConfig, CreateAxiosDefaults } from 'axios'
+import { useUserStore } from '@/stores'
+import { Message } from '@arco-design/web-vue'
 
-export interface IResponse {
+/**
+ * @Description: 请求响应接口
+ */
+export interface ApiResponse<D = any> {
     code?: number
     message?: string
     time?: string | number
-    data?: any
+    data?: D
 }
+
+/**
+ * 接口返回 Promise 类型
+ */
+export type ApiPromise<T = any> = Promise<ApiResponse<T>>
 
 class Request {
     // axios实例
@@ -29,13 +39,46 @@ class Request {
         this.setInterceptors(this.instance)
     }
     // 请求
-    request(config: AxiosRequestConfig): Promise<IResponse> {
+    request(config: AxiosRequestConfig): ApiPromise {
         return this.instance(config)
+    }
+
+    /**
+     * 处理响应
+     * @param res
+     */
+    handleResponse(res: AxiosResponse & any) {
+        const { userLogout } = useUserStore()
+        const url = res.config.url || ''
+        // 请求完成后，将控制器实例从Map中移除
+        this.abortControllerMap.delete(url)
+        if (axios.isCancel(res)) {
+            console.log('Request canceled', res)
+            return Promise.reject(res)
+        }
+        if (res.status === 200) {
+            const { showError = true } = res.config
+            const { code } = res.data
+            if (code === 200) {
+                return Promise.resolve(res.data)
+            } else if (code === 401) {
+                userLogout()
+                Message.warning('登录已过期，请重新登录')
+                return Promise.reject(res.data)
+            } else {
+                if (showError) {
+                    Message.error(res.data.message || '服务繁忙，请重试~')
+                }
+                return Promise.reject(res.data)
+            }
+        }
+        return Promise.reject(res)
     }
     // 拦截器
     setInterceptors(request: AxiosInstance) {
         // 请求拦截器
-        request.interceptors.request.use(config => {
+        request.interceptors.request.use((config) => {
+            const { token } = useUserStore()
             // toDo 也可以在这里做一个重复请求的拦截
             // https://github.com/axios/axios/tree/main#abortcontroller
             // 请求url为key
@@ -47,27 +90,20 @@ class Request {
             // 将控制器实例存储到Map中
             this.abortControllerMap.set(url, controller)
             // 设置请求头
-            const token = localStorage.getItem('token')
             if (config && config.headers && token) {
-                config.headers.set('token', token)
+                config.headers.set('Authorization', `Bearer ${token}`)
             }
             return config
         })
         // 响应拦截器
-        request.interceptors.response.use(res => {
-            const url = res.config.url || ''
-            // 请求完成后，将控制器实例从Map中移除
-            this.abortControllerMap.delete(url)
-            if (axios.isCancel(res)) {
-                console.log('Request canceled', res)
-                return Promise.reject(res)
+        request.interceptors.response.use(
+            (res) => {
+                return this.handleResponse(res)
+            },
+            (res) => {
+                return this.handleResponse(res)
             }
-            if (res.status === 200) {
-                return Promise.resolve(res.data)
-            }
-            console.error(res)
-            return Promise.reject(res)
-        })
+        )
     }
     /**
      * 取消全部请求
@@ -91,6 +127,20 @@ class Request {
             this.abortControllerMap.delete(_url)
         }
     }
+}
+
+const instance = new Request({
+    baseURL: `${import.meta.env.VITE_API_URL}`
+} as CreateAxiosDefaults)
+
+// 请求
+export const request = (config: AxiosRequestConfig & any): ApiPromise => {
+    return instance.request(config)
+}
+
+// 取消请求
+export const cancelRequest = (url: string) => {
+    instance.cancelRequest(url)
 }
 
 export default Request

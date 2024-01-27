@@ -15,6 +15,7 @@ dist-ssr
 /release
 coverage
 *.local
+components.d.ts
 
 /cypress/videos/
 /cypress/screenshots/

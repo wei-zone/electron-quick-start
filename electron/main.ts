@@ -35,7 +35,7 @@ const createWindow = () => {
     win.once('ready-to-show', () => {
         win.show()
         // 进来就是全屏
-        win.setFullScreen(true)
+        // win.setFullScreen(true)
     })
 
     // Test active push message to Renderer-process.
