@@ -15,11 +15,11 @@ export function loadRemoteJs(src: string) {
         scriptNode.setAttribute('charset', 'utf-8')
         scriptNode.setAttribute('src', src)
         document.body.appendChild(scriptNode)
-        scriptNode.onload = res => {
+        scriptNode.onload = (res) => {
             console.log(`${src} is loaded`)
             resolve(res)
         }
-        scriptNode.onerror = e => {
+        scriptNode.onerror = (e) => {
             console.warn(`${src} is load failed`)
             reject(e)
         }

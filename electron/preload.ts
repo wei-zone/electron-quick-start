@@ -37,18 +37,39 @@ const safeDOM = {
 function useLoading() {
     const className = `loaders-css__square-spin`
     const styleContent = `
-@keyframes square-spin {
-  25% { transform: perspective(100px) rotateX(180deg) rotateY(0); }
-  50% { transform: perspective(100px) rotateX(180deg) rotateY(180deg); }
-  75% { transform: perspective(100px) rotateX(0) rotateY(180deg); }
-  100% { transform: perspective(100px) rotateX(0) rotateY(0); }
+@keyframes animloader {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
-.${className} > div {
-  animation-fill-mode: both;
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
+.${className} {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+.${className}::after,
+.${className}::before {
+  content: '';
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #FFF;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: animloader 2s linear infinite;
+  transform: scale(0.5);
+  opacity: 0.5;
+}
+.${className}::after {
+  animation-delay: 1s;
 }
 .app-loading-wrap {
   position: fixed;
@@ -60,7 +81,7 @@ function useLoading() {
   align-items: center;
   justify-content: center;
   background: #282c34;
-  z-index: 9;
+  z-index: 99999;
 }
     `
     const oStyle = document.createElement('style')

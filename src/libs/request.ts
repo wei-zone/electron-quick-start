@@ -63,7 +63,7 @@ class Request {
                 return Promise.resolve(res.data)
             } else if (code === 401) {
                 userLogout()
-                Message.warning('登录已过期，请重新登录')
+                Message.error('登录已过期，请重新登录')
                 return Promise.reject(res.data)
             } else {
                 if (showError) {
@@ -79,7 +79,6 @@ class Request {
         // 请求拦截器
         request.interceptors.request.use((config) => {
             const { token } = useUserStore()
-            // toDo 也可以在这里做一个重复请求的拦截
             // https://github.com/axios/axios/tree/main#abortcontroller
             // 请求url为key
             const url = config.url || ''

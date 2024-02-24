@@ -3,17 +3,20 @@
  */
 {
     $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
-    appId: 'YourAppID',
-    asar: true,
+    productName: 'electron-app',
+    appId: 'com.electron.app',
+    asar: false, // 是否压缩resources资源，包括dist和electron-dist
     directories: {
         output: 'release/${version}'
     },
-    files: ['dist-electron', 'dist'],
+    files: ['dist-electron', 'dist', 'package.json'],
     mac: {
-        artifactName: '${productName}_${version}.${ext}',
+        icon: './public/favicon.512.png',
+        artifactName: '${productName}-${version}-Setup.${ext}',
         target: ['dmg']
     },
     win: {
+        icon: './public/favicon.ico',
         target: [
             {
                 target: 'nsis',
@@ -23,9 +26,19 @@
         artifactName: '${productName}_${version}.${ext}'
     },
     nsis: {
-        oneClick: false,
+        oneClick: false, // 是否一键安装
         perMachine: false,
-        allowToChangeInstallationDirectory: true,
-        deleteAppDataOnUninstall: false
-    }
+        allowToChangeInstallationDirectory: true, // 允许修改安装目录
+        deleteAppDataOnUninstall: false,
+        installerIcon: './public/favicon.ico', // 安装图标
+        uninstallerIcon: './public/favicon.ico', //卸载图标
+        installerHeaderIcon: './public/favicon.ico', // 安装时头部图标
+        createDesktopShortcut: true, // 创建桌面图标
+        createStartMenuShortcut: true, // 创建开始菜单图标
+        shortcutName: 'electron-app'
+    },
+    extraMetadata: {
+        main: 'dist-electron/main.js'
+    },
+    extends: null
 }

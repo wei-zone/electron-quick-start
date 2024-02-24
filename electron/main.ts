@@ -12,30 +12,41 @@ import path from 'node:path'
 // │ │ ├── main.js
 // │ │ └── preload.js
 
-process.env.DIST = path.join(__dirname, '../dist')
-process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public')
-
 let win: any | null
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
+
+process.env.DIST = path.join(__dirname, '../dist')
+process.env.PUBLIC = VITE_DEV_SERVER_URL
+    ? path.join(process.env.DIST, '../public')
+    : process.env.DIST
+
 const createWindow = () => {
     // 创建浏览窗口
     win = new BrowserWindow({
-        icon: path.join('../public/favicon.ico'),
+        // 隐藏菜单栏
+        // autoHideMenuBar: true,
+        // 运行icon
+        icon: path.join(process.env.PUBLIC, 'favicon.ico'),
         webPreferences: {
-            preload: path.join('preload.js')
+            preload: path.join(__dirname, 'preload.js')
         },
         // 默认不展示
         show: false,
         // 背景色
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        frame: true // false:：创建无边框窗口
     })
 
     // 优雅地显示窗口
     win.once('ready-to-show', () => {
         win.show()
-        // 进来就是全屏
-        // win.setFullScreen(true)
+        if (process.env.NODE_ENV === 'development') {
+            win.webContents.openDevTools({ mode: 'bottom' })
+        } else {
+            // 进来就是全屏
+            // win.setFullScreen(true)
+        }
     })
 
     // Test active push message to Renderer-process.
@@ -74,3 +85,20 @@ app.on('window-all-closed', () => {
     }
     win = null
 })
+
+// 设置开机启动
+// app.setLoginItemSettings({
+//     openAtLogin: process.env.NODE_ENV !== 'development', // Windows
+//     openAsHidden: process.env.NODE_ENV !== 'development', // macOS
+//     args: ['--openAsHidden']
+// })
+
+// 获取是否开机启动
+// const {
+//     openAtLogin // Windows
+//     // openAsHidden, // macOS
+// } = app.getLoginItemSettings({
+//     args: ['--openAsHidden']
+// })
+//
+// console.log('<-- openAtLogin', openAtLogin)

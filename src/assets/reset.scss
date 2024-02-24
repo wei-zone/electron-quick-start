@@ -11,8 +11,6 @@ body {
     min-height: 100vh;
     height: 100%;
     overflow: hidden;
-    color: var(--color-text);
-    background: var(--color-background);
     transition: color 0.5s, background-color 0.5s;
     line-height: 1.6;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans',
@@ -46,6 +44,30 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none !important;
     appearance: none !important;
     margin: 0;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(179, 177, 177);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(136, 136, 136);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(100, 100, 100);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: rgb(68, 68, 68);
+    border-radius: 10px;
 }
 
 #app {
